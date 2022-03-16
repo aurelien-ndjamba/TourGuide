@@ -9,13 +9,15 @@ import org.springframework.stereotype.Service;
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
+import lombok.Data;
 
+@Data
 @Service
 public class GpsUtilService {
-	
+
 	@Autowired
 	private GpsUtil gpsUtil;
-	
+
 	public VisitedLocation getUserLocation(UUID userId) {
 		return gpsUtil.getUserLocation(userId);
 	}

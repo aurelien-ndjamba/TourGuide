@@ -8,12 +8,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.junit.Test; // JUnit 4
+//import org.junit.jupiter.api.Test // JUnit 5
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import tourguide.configuration.CustomProperties;
 import tourguide.modele.Attraction;
@@ -24,37 +23,37 @@ import tourguide.modele.User;
 import tourguide.modele.UserReward;
 import tourguide.modele.VisitedLocation;
 import tourguide.repository.GpsUtilProxy;
+import tourguide.repository.RewardsProxy;
+import tourguide.repository.TripPricerProxy;
 import tourguide.service.TourguideService;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestTourGuideService {
 
 	@Autowired
-	CustomProperties props;
-	@Autowired
-	TourguideService TourguideService;
-	@Autowired
 	GpsUtilProxy gpsUtilProxy;
-
-	@Test
-	public void contextLoads() {
-	}
-
-	@Before
-	public void init() {
-		props.setInternalUserNumber(0);
-		props.setDefaultProximityBuffer(10);
-	}
+	@Autowired
+	RewardsProxy rewardsProxy;
+	@Autowired
+	TripPricerProxy tripPricerProxy;
+	@Autowired
+	CustomProperties props;
 
 	@Test
 	public void getUserLocation() {
 		// GIVEN
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		props.setTestMode(true);
+		props.setInternalUserNumber(0);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		props.setDefaultProximityBuffer(10);
+		props.setSTATUTE_MILES_PER_NAUTICAL_MILE(1.15077945);
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
 
 		// WHEN
-		VisitedLocation visitedLocation = TourguideService.trackUserLocation(user);
-		TourguideService.getTracker().stopTracking();
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		VisitedLocation visitedLocation = tourguideService.trackUserLocation(user);
 
 		// THEN
 		assertTrue(visitedLocation.getUserId().equals(user.getUserId()));
@@ -63,35 +62,39 @@ public class TestTourGuideService {
 	@Test
 	public void addUser() {
 		// GIVEN
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
-		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourguide.com");
-
-		TourguideService.addUser(user);
-		TourguideService.addUser(user2);
+		props.setTestMode(true);
+		props.setInternalUserNumber(0);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
 
 		// WHEN
-		User retrivedUser = TourguideService.getUser(user.getUserName());
-		User retrivedUser2 = TourguideService.getUser(user2.getUserName());
-
-		TourguideService.getTracker().stopTracking();
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourguide.com");
+		tourguideService.addUser(user);
+		tourguideService.addUser(user2);
 
 		// THEN
-		assertEquals(user, retrivedUser);
-		assertEquals(user2, retrivedUser2);
+		assertEquals(tourguideService.getAllUsers().size(), 2);
 	}
 
 	@Test
 	public void getAllUsers() {
 		// GIVEN
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
-		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourguide.com");
+		props.setTestMode(true);
+		props.setInternalUserNumber(0);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
 
 		// WHEN
-		TourguideService.addUser(user);
-		TourguideService.addUser(user2);
-
-		List<User> allUsers = TourguideService.getAllUsers();
-		TourguideService.getTracker().stopTracking();
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourguide.com");
+		tourguideService.addUser(user);
+		tourguideService.addUser(user2);
+		List<User> allUsers = tourguideService.getAllUsers();
 
 		// THEN
 		assertTrue(allUsers.stream().map(x -> x.getUserName()).collect(Collectors.toList()).contains("jon"));
@@ -101,11 +104,16 @@ public class TestTourGuideService {
 	@Test
 	public void trackUser() {
 		// GIVEN
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		props.setTestMode(true);
+		props.setInternalUserNumber(0);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
 
 		// WHEN
-		VisitedLocation visitedLocation = TourguideService.trackUserLocation(user);
-		TourguideService.getTracker().stopTracking();
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		VisitedLocation visitedLocation = tourguideService.trackUserLocation(user);
 
 		// THEN
 		assertEquals(user.getUserId(), visitedLocation.getUserId());
@@ -114,29 +122,37 @@ public class TestTourGuideService {
 	@Test
 	public void getNearbyAttractions() {
 		// GIVEN
-		System.out.println(props.getInternalUserNumber() + "<--------");
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		props.setTestMode(true);
+		props.setInternalUserNumber(1);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		props.setSTATUTE_MILES_PER_NAUTICAL_MILE(1.15077945);
+		props.setDefaultProximityBuffer(10);
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
 
 		// WHEN
-		TourguideService.addUser(user);
-		VisitedLocation visitedLocation = TourguideService.trackUserLocation(user);
-		List<TouristAttraction> attractions = TourguideService.getNearByAttractions(visitedLocation);
-
-		TourguideService.getTracker().stopTracking();
+		tourguideService.trackUserLocation(tourguideService.getAllUsers().get(0));
+		List<TouristAttraction> touristAttractions = tourguideService
+				.getNearByAttractions(tourguideService.getAllUsers().get(0).getUserName());
 
 		// THEN
-		assertEquals(5, attractions.size());
+		assertEquals(5, touristAttractions.size());
 	}
 
 	@Test
 	public void getTripDeals() {
 		// GIVEN
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		props.setTestMode(true);
+		props.setInternalUserNumber(1);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		props.setApiUrlTripPricer("http://localhost:9003");
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
 
 		// WHEN
-		List<Provider> providers = TourguideService.getTripDeals(user.getUserName(), 1, 1, 1);
-
-		TourguideService.getTracker().stopTracking();
+		List<Provider> providers = tourguideService.getTripDeals("internalUser0", 1, 1, 1);
 
 		// THEN
 		assertEquals(5, providers.size());
@@ -146,47 +162,66 @@ public class TestTourGuideService {
 	@Test
 	public void userGetRewards() {
 		// GIVEN
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
-		Attraction attraction = gpsUtilProxy.getAttractions().get(0);
-		VisitedLocation newVisitedLocation = new VisitedLocation(user.getUserId(),
-				new Location(attraction.getLongitude(), attraction.getLatitude()), new Date());
-
-		user.addToVisitedLocations(newVisitedLocation);
+		props.setTestMode(true);
+		props.setInternalUserNumber(0);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		props.setApiUrlTripPricer("http://localhost:9003");
+		props.setDefaultProximityBuffer(10);
+		props.setSTATUTE_MILES_PER_NAUTICAL_MILE(1.15077945);
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
 
 		// WHEN
-		TourguideService.calculateRewards(user);
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		Attraction attraction = gpsUtilProxy.getAttractions(props).get(0);
+		VisitedLocation newVisitedLocation = new VisitedLocation(user.getUserId(),
+				new Location(attraction.getLongitude(), attraction.getLatitude()), new Date());
+		user.addToVisitedLocations(newVisitedLocation);
+		tourguideService.calculateRewards(user);
 		List<UserReward> userRewards = user.getUserRewards();
-		TourguideService.getTracker().stopTracking();
 
 		// THEN
-		assertTrue(userRewards.size() == 1);
+		assertEquals(userRewards.size(), 1);
 	}
 
 	@Test
 	public void isWithinAttractionProximity() {
 		// GIVEN
-		Attraction attraction = gpsUtilProxy.getAttractions().get(0);
+		props.setTestMode(true);
+		props.setInternalUserNumber(0);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
 
 		// WHEN
+		Attraction attraction = gpsUtilProxy.getAttractions(props).get(0);
 		Location newLocation = new Location(attraction.getLongitude(), attraction.getLatitude());
 
 		// THEN
-		assertTrue(TourguideService.isWithinAttractionProximity(attraction, newLocation));
+		assertTrue(tourguideService.isWithinAttractionProximity(attraction, newLocation));
 	}
 
 	@Test
 	public void nearAllAttractions() {
 		// GIVEN
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		props.setTestMode(true);
+		props.setInternalUserNumber(1);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		props.setApiUrlTripPricer("http://localhost:9003");
 		props.setDefaultProximityBuffer(Integer.MAX_VALUE);
+		props.setSTATUTE_MILES_PER_NAUTICAL_MILE(1.15077945);
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
 
 		// WHEN
-		TourguideService.trackUserLocation(user); 
-		List<UserReward> userRewardsAll = TourguideService.getUserRewards(user);
-		TourguideService.getTracker().stopTracking();
+		tourguideService.calculateRewards(tourguideService.getAllUsers().get(0));
+		List<UserReward> userRewards = tourguideService.getUserRewards(tourguideService.getAllUsers().get(0));
 
 		// THEN
-		assertEquals(gpsUtilProxy.getAttractions().size(), userRewardsAll.size());
+		assertEquals(tourguideService.getAttractions().size(), userRewards.size());
 	}
 
 }

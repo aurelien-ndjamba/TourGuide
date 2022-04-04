@@ -14,52 +14,52 @@ import tourguide.configuration.CustomProperties;
 import tourguide.modele.User;
 
 public class Tracker extends Thread {
-	
+
 	@Autowired
 	private CustomProperties props;
-	
+
 	private Logger logger = LoggerFactory.getLogger(Tracker.class);
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-	private final TourguideService tourguideService;
+	private TourguideService tourguideService;
 	private boolean stop = false;
 
-	public Tracker(TourguideService tourguideService) {
-		System.out.println("---entr�e dans Tracker");
+	public Tracker(TourguideService tourguideService) { 
 		this.tourguideService = tourguideService;
-		executorService.submit(this);
+		executorService.submit(this); 
 	}
-	
+
 	/**
 	 * Assures to shut down the Tracker thread
 	 */
 	public void stopTracking() {
 		stop = true;
-		System.out.println("fin tracking");
 		executorService.shutdownNow();
 	}
-	
+
 	@Override
 	public void run() {
 		StopWatch stopWatch = new StopWatch();
-		while(true) {
-			if(Thread.currentThread().isInterrupted() || stop) {
+		while (true) {
+			if (Thread.currentThread().isInterrupted() || stop) {
 				logger.debug("Tracker stopping");
 				break;
 			}
 			List<User> users = tourguideService.getAllUsers();
-			logger.debug("Begin Tracker. Tracking " + users.size() + " users."); 
+			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
+			
 			stopWatch.start();
-			users.forEach(u -> tourguideService.trackUserLocation(u));
+			tourguideService.trackUserLocation(users);
 			stopWatch.stop();
-			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
+			
+			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
 			stopWatch.reset();
 			try {
 				logger.debug("Tracker sleeping");
-				TimeUnit.SECONDS.sleep(props.getTrackingPollingInterval()); //props.getTrackingPollingInterval()
+				TimeUnit.SECONDS.sleep(props.getTrackingPollingInterval());
 			} catch (InterruptedException e) {
 				break;
 			}
 		}
-		
+
 	}
 }

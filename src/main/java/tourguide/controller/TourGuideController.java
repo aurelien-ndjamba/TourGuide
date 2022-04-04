@@ -12,24 +12,26 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jsoniter.output.JsonStream;
 
 import tourguide.modele.Location;
+import tourguide.modele.Provider;
 import tourguide.modele.TouristAttraction;
 import tourguide.modele.User;
+import tourguide.modele.UserReward;
 import tourguide.service.TourguideService;
 
 @RestController
 public class TourGuideController {
 
 	@Autowired
-	private TourguideService TourguideService;
+	private TourguideService tourguideService;
 
 	@RequestMapping("/")
-	public String index() { 
+	public String index() {
 		return "Greetings from Tourguide!";
 	}
-
+ 
 	@RequestMapping("/getLocation")
-	public String getLocation(@RequestParam String userName) {
-		return JsonStream.serialize(TourguideService.getUserLocation(userName).getLocation());
+	public Location getLocation(@RequestParam String userName) {
+		return tourguideService.getUserLocation(userName).getLocation();
 	}
 
 	// TODO: Change this method to no longer return a List of Attractions.
@@ -44,13 +46,14 @@ public class TourGuideController {
 	// The reward points for visiting each Attraction.
 	// Note: Attraction reward points can be gathered from RewardsCentral
 	@RequestMapping("/getNearbyAttractions")
-	public  List<TouristAttraction> getNearbyAttractions(@RequestParam String userName) {
-		return TourguideService.getNearByAttractions(userName); 
+	public List<TouristAttraction> getNearbyAttractions(@RequestParam String userName) {
+		return tourguideService.getNearByAttractions(userName);
 	}
 
 	@RequestMapping("/getRewards")
-	public String getRewards(@RequestParam String userName) {
-		return JsonStream.serialize(TourguideService.getUserRewards(getUser(userName)));
+	public List<UserReward> getUserRewards(@RequestParam String userName) {
+//		return JsonStream.serialize(tourguideService.getUserRewards(getUser(userName)));
+		return tourguideService.getUserRewards(userName);
 	}
 
 	@RequestMapping("/getAllCurrentLocations")
@@ -67,18 +70,13 @@ public class TourGuideController {
 		// {"longitude":-48.188821,"latitude":74.84371}
 		// ...
 		// }
-		return TourguideService.getAllCurrentLocations();
+		return tourguideService.getAllCurrentLocations();
 	}
 
 	@RequestMapping("/getTripDeals")
-	public String getTripDeals(@RequestParam String userName, @RequestParam int numberOfAdults, @RequestParam int numberOfChildren,
-			@RequestParam int tripDuration) {
-		return JsonStream.serialize(TourguideService.getTripDeals(userName, numberOfAdults, numberOfChildren, tripDuration));
-	}
-
-	@RequestMapping("/getUser")
-	private User getUser(@RequestParam String userName) {
-		return TourguideService.getUser(userName);
+	public List<Provider> getTripDeals(@RequestParam String userName, @RequestParam int numberOfAdults,
+			@RequestParam int numberOfChildren, @RequestParam int tripDuration) {
+		return tourguideService.getTripDeals(userName, numberOfAdults, numberOfChildren, tripDuration);
 	}
 
 }

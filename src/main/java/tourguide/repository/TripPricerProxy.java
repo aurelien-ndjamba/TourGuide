@@ -3,7 +3,6 @@ package tourguide.repository;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -17,12 +16,9 @@ import tourguide.modele.Provider;
 @Component
 public class TripPricerProxy {
 
-	@Autowired
-	private CustomProperties props;
-
 	public List<Provider> getPrice(String tripPricerApiKey, UUID userId, int numberOfAdults, int numberOfChildren,
-			int tripDuration, int cumulatativeRewardPoints) {
-		String baseApiUrl = props.getApiUrlTripPricer(); // "http://localhost:9003"
+			int tripDuration, int cumulatativeRewardPoints, CustomProperties props) {
+		String baseApiUrl = props.getApiUrlTripPricer();
 		String apiUrl = baseApiUrl + "/getPrice?tripPricerApiKey=" + tripPricerApiKey + "&userId=" + userId
 				+ "&numberOfAdults=" + numberOfAdults + "&numberOfChildren=" + numberOfChildren + "&tripDuration="
 				+ tripDuration + "&cumulatativeRewardPoints=" + cumulatativeRewardPoints;

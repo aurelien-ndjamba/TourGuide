@@ -1,8 +1,6 @@
 [![forthebadge](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com) 
 ![uses-spring-boot (2)](https://user-images.githubusercontent.com/66125882/150993441-590505b7-fd53-44df-9ac5-695d0fb59754.svg)
-[![forthebadge](https://forthebadge.com/images/badges/uses-css.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/uses-html.svg)](https://forthebadge.com)
 ![uses-eclipse-ide (1)](https://user-images.githubusercontent.com/66125882/150993531-3f8d450c-0399-4c9f-920c-4296d0473f2d.svg)
 
 # TourGuide
@@ -13,10 +11,10 @@ Api permettant aux voyageurs d'obtenir des offres de voyages personnalisés et d
 - Ouvrer un terminal puis taper les commandes de démarrages.
 
 ## Démarrage:
-docker run -d -p 9001:9001 --name gpsutil tourguide/gpsutil
-docker run -d -p 9002:9002 --name rewards tourguide/rewardcentral
-docker run -d -p 9003:9003 --name trippricer tourguide/trippricer
-docker run -d -p 8080:8080 --name tourguide tourguide/tourguide
+- docker run -d -p 9001:9001 --name gpsutil tourguide/gpsutil
+- docker run -d -p 9002:9002 --name rewards tourguide/rewardcentral
+- docker run -d -p 9003:9003 --name trippricer tourguide/trippricer
+- docker run -d -p 8080:8080 --name tourguide tourguide/tourguide
 
 ## Technologies
 1. Framework: Spring Boot v2.6.5

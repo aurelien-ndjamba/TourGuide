@@ -13,7 +13,7 @@ Api permettant aux voyageurs d'obtenir des offres de voyages personnalisés et d
 ## Démarrage:
 - docker-compose up -d
 
-ou les commandes suivantes dans l'ordre:
+  ou les commandes suivantes dans l'ordre:
 
 - docker run -d -p 9001:9001 --name gpsutil tourguide/gpsutil
 - docker run -d -p 9002:9002 --name rewards tourguide/rewardcentral

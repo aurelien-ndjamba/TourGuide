@@ -7,8 +7,8 @@
 Api permettant aux voyageurs d'obtenir des offres de voyages personnalisés et des points de récompense pour les attractions touristiques visités. 
 
 ## Pour commencer:
-- Cloner la derniere release du projet
-- Ouvrer un terminal à la racine du projet puis taper les commandes spécifiées dans l'onglet "Démarrage".
+- Créer un dossier "TourGuide" puis cloner l'ensemble des branches dans ce dossier.
+- Ouvrer un terminal à la racine de ce dossier puis taper les commandes spécifiées dans l'onglet "Démarrage".
 
 ## Démarrage:
 - docker-compose up -d

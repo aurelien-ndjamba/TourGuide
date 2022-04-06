@@ -22,8 +22,8 @@ Api permettant aux voyageurs d'obtenir des offres de voyages personnalisés et d
 
 ## Technologies
 1. Framework: Spring Boot v2.6.5
-2. Java 8
-3. Junit 5: v5.3.2
+2. Java v1.8.0_321
+3. Junit v5.3.2
 4. Jacoco v0.8.4
 5. Maven v3.0
 6. Eclipe IDE Version: 2020-09 v4.17.0

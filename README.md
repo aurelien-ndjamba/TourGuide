@@ -8,7 +8,7 @@ Api permettant aux voyageurs d'obtenir des offres de voyages personnalisés et d
 
 ## Pour commencer:
 - Cloner la derniere release du projet
-- Ouvrer un terminal puis taper les commandes de démarrages.
+- Ouvrer un terminal à la racine du projet puis taper les commandes spécifiées dans l'onglet "Démarrage".
 
 ## Démarrage:
 - docker-compose up -d

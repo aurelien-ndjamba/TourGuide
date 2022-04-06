@@ -23,6 +23,8 @@ Api permettant aux voyageurs d'obtenir des offres de voyages personnalisés et d
 4. Jacoco v0.8.4
 5. Maven v3.0
 6. Eclipe IDE Version: 2020-09 (4.17.0)
+7. Docker v20.10.12
+8. docker-compose v1.29.2
 
 ## Version
 tourguide_0.0.1

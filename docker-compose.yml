@@ -1,0 +1,40 @@
+version: '3'
+services:
+  gpsutil:
+    image: tourguide/gpsutil
+    ports: 
+      - "9001:9001"
+    volumes: 
+      - /app/logs/gpsutil
+    restart: always
+  
+  rewardcentral:
+    image: tourguide/rewardcentral
+    ports: 
+      - "9002:9002"
+    volumes: 
+      - /app/logs/rewards
+    restart: always
+
+  trippricer:
+    image: tourguide/trippricer
+    ports: 
+      - "9003:9003"
+    volumes: 
+      - /app/logs/trippricer
+    restart: always
+
+  tourguide:
+    depends_on:
+      - gpsutil
+      - rewardcentral
+      - trippricer
+    image: tourguide/tourguide
+    volumes: 
+      - /app/logs/tourguide
+    ports:
+      - "8080:8080"
+    restart: always
+
+#volumes:
+#  db_data: {}

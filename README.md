@@ -7,18 +7,11 @@
 Api permettant aux voyageurs d'obtenir des offres de voyages personnalisés et des points de récompense pour les attractions touristiques visités. 
 
 ## Pour commencer:
-- Créer un dossier "TourGuide" puis cloner l'ensemble des branches dans ce dossier.
+- Créer un dossier "TourGuide" puis cloner la branche main dans ce dossier.
 - Ouvrer un terminal à la racine de ce dossier puis taper les commandes spécifiées dans l'onglet "Démarrage".
 
 ## Démarrage:
 - docker-compose up -d
-
-  ou les commandes suivantes dans l'ordre:
-
-- docker run -d -p 9001:9001 --name gpsutil tourguide/gpsutil
-- docker run -d -p 9002:9002 --name rewards tourguide/rewardcentral
-- docker run -d -p 9003:9003 --name trippricer tourguide/trippricer
-- docker run -d -p 8080:8080 --name tourguide tourguide/tourguide
 
 ## Technologies
 1. Framework: Spring Boot v2.6.5

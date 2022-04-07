@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.junit.Test; // JUnit 4
-//import org.junit.jupiter.api.Test // JUnit 5
 import org.springframework.boot.test.context.SpringBootTest;
 
 import tourguide.configuration.CustomProperties;
@@ -140,6 +138,24 @@ public class TestTourGuideService {
 		assertEquals(5, touristAttractions.size());
 	}
 
+	@Test
+	public void getAllCurrentLocations() {
+		// GIVEN
+		props.setTestMode(true);
+		props.setInternalUserNumber(1);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		props.setSTATUTE_MILES_PER_NAUTICAL_MILE(1.15077945);
+		props.setDefaultProximityBuffer(10);
+
+		// WHEN
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
+		
+		// THEN
+		assertEquals(tourguideService.getAllUsers().size(), tourguideService.getAllCurrentLocations().size());
+	}
+	
 	@Test
 	public void getTripDeals() {
 		// GIVEN

@@ -25,7 +25,7 @@ public class GpsUtilProxy {
 		return response.getBody();
 	}
 
-	public static List<Attraction> getAttractions(CustomProperties props) {
+	public List<Attraction> getAttractions(CustomProperties props) {
 		String baseApiUrl = props.getApiUrlGpsUtil();
 		String apiUrl = baseApiUrl + "/getAttractions";
 		RestTemplate restTemplate = new RestTemplate();

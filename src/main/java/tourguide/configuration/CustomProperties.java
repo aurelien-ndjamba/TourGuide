@@ -19,5 +19,6 @@ public class CustomProperties {
 	private double STATUTE_MILES_PER_NAUTICAL_MILE;
 	private int defaultProximityBuffer;
 	private int attractionProximityRange;
+	private int threadPool;
 	
 }

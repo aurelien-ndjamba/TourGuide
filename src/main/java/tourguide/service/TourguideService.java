@@ -52,6 +52,15 @@ public class TourguideService {
 	public static List<Attraction> attractions = new ArrayList<Attraction>();
 	public final Tracker tracker;
 
+	/**
+	 * Constructeur TourguideService
+	 * 
+	 * @param GpsUtilProxy
+	 * @param RewardsProxy
+	 * @param TripPricerProxy
+	 * @param CustomProperties
+	 * 
+	 */
 	public TourguideService(GpsUtilProxy gpsUtilProxy, RewardsProxy rewardsProxy, TripPricerProxy tripPricerProxy,
 			CustomProperties props) {
 		this.gpsUtilProxy = gpsUtilProxy;
@@ -69,10 +78,11 @@ public class TourguideService {
 		addShutDownHook();
 	}
 
-	// Database connection will be used for external users, but for testing purposes
-	// internal users are provided and stored in memory
-	// private final Map<String, User> internalUserMap = new HashMap<>();
-
+	/**
+	 * Méthode pour initialiser des utilisateurs pour des tests internes
+	 * 
+	 * @return void
+	 */
 	public void initializeInternalUsers() {
 		IntStream.range(0, props.getInternalUserNumber()).forEach(i -> {
 			String userName = "internalUser" + i;
@@ -86,10 +96,12 @@ public class TourguideService {
 		logger.debug("Created " + props.getInternalUserNumber() + " internal test users.");
 	}
 
-	// Database connection will be used for external users, but for testing purposes
-	// internal users are provided and stored in memory
-	// private final Map<String, User> internalUserMap = new HashMap<>();
-
+	/**
+	 * Méthode pour générer un historique aléatoire de localisation d'un utilisateur
+	 * 
+	 * @param User
+	 * @return void
+	 */
 	private void generateUserLocationHistory(User user) {
 		IntStream.range(0, 3).forEach(i -> {
 			user.addToVisitedLocations(new VisitedLocation(user.getUserId(),
@@ -97,9 +109,11 @@ public class TourguideService {
 		});
 	}
 
-	/*
-	 * Calcul les points de recommapense pour chaque endroit visit� par un
-	 * utilisateur si ce dernier �tait proche d'une attraction
+	/**
+	 * Méthode pour calculer les récompenses d'un utilisateur
+	 * 
+	 * @param User
+	 * @return void
 	 */
 	public void calculateRewards(User user) {
 		List<VisitedLocation> visitedLocations = user.getVisitedLocations();
@@ -121,8 +135,14 @@ public class TourguideService {
 
 	}
 
+	/**
+	 * Méthode pour calculer les récompenses de plusieurs utilisateurs
+	 * 
+	 * @param List<User>
+	 * @return void
+	 */
 	public void calculateRewards(List<User> users) throws InterruptedException {
-		executorService = Executors.newFixedThreadPool(1000);
+		executorService = Executors.newFixedThreadPool(props.getThreadPool());
 		for (int i = 0; i < users.size(); i++) {
 			User user = users.get(i);
 			Runnable task = () -> {
@@ -133,32 +153,72 @@ public class TourguideService {
 		executorService.shutdown();
 	}
 
+	/**
+	 * Méthode pour obtenir la liste de tous les utilisateurs
+	 * 
+	 * @return List<User>
+	 */
 	public List<User> getAllUsers() {
 		return internalUserMap.values().stream().collect(Collectors.toList());
 	}
 
+	/**
+	 * Méthode pour obtenir la liste de récompense d'un utilisateur
+	 * 
+	 * @param User
+	 * @return List<UserReward>
+	 */
 	public List<UserReward> getUserRewards(User user) {
 		return user.getUserRewards();
 	}
 
+	/**
+	 * Méthode pour obtenir la liste de récompense d'un utilisateur
+	 * 
+	 * @param String
+	 * @return List<UserReward>
+	 */
 	public List<UserReward> getUserRewards(String userName) {
 		User user = internalUserMap.get(userName);
 		return user.getUserRewards();
 	}
 
+	/**
+	 * Méthode pour obtenir l'emplacement d'un utilisateur
+	 * 
+	 * @param String
+	 * @return VisitedLocation
+	 */
 	public VisitedLocation getUserLocation(String userName) {
-		User user = internalUserMap.get(userName); 
+		User user = internalUserMap.get(userName);
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
 				: trackUserLocation(user);
 		return visitedLocation;
 	}
 
+	/**
+	 * Méthode pour ajouter un utilisateur
+	 * 
+	 * @param User
+	 * @return void
+	 */
 	public void addUser(User user) {
 		if (!internalUserMap.containsKey(user.getUserName())) {
 			internalUserMap.put(user.getUserName(), user);
 		}
 	}
 
+	/**
+	 * Méthode pour obtenir des offres de voyages d'un utilisateur en fonction de
+	 * ses critères de recherche
+	 * 
+	 * @param String
+	 * @param int
+	 * @param int
+	 * @param int
+	 * @return List<Provider>
+	 * 
+	 */
 	public List<Provider> getTripDeals(String userName, int numberOfAdults, int numberOfChildren, int tripDuration) {
 		User user = internalUserMap.get(userName);
 		user.getUserPreferences().setNumberOfAdults(numberOfAdults);
@@ -172,9 +232,12 @@ public class TourguideService {
 		return providers;
 	}
 
-	/*
-	 * Track Lieu visit� d'un utilisateur en fonction de son Id & Calcul les points
-	 * de voyages
+	/**
+	 * Méthode pour obtenir l'emplacement visité d'un utilisateur
+	 * 
+	 * @param User
+	 * @return VisitedLocation
+	 * 
 	 */
 	public VisitedLocation trackUserLocation(User user) {
 		VisitedLocation visitedLocation = gpsUtilProxy.getUserLocation(user.getUserId(), props);
@@ -183,19 +246,16 @@ public class TourguideService {
 		return visitedLocation;
 	}
 
+	/**
+	 * Méthode pour obtenir les emplacements visités de plusieurs utilisateurs
+	 * 
+	 * @param List<User>
+	 * @return void
+	 * 
+	 */
 	public void trackUserLocation(List<User> users) {
-//		executorService = Executors.newFixedThreadPool(1000);
-//		for (int i = 0; i < users.size(); i++) {
-//			User user = users.get(i);
-//			Callable<VisitedLocation> task = () -> {
-//				return trackUserLocation(user);
-//			};
-//			executorService.submit(task); 
-//		}
-//		executorService.shutdown();
-		/////////////////////////////////////////////////////////////////////
 		List<Callable<VisitedLocation>> tasks = new ArrayList<>();
-		executorService = Executors.newFixedThreadPool(1000);
+		executorService = Executors.newFixedThreadPool(props.getThreadPool());
 		for (int i = 0; i < users.size(); i++) {
 			User user = users.get(i);
 			Callable<VisitedLocation> task = () -> {
@@ -209,11 +269,15 @@ public class TourguideService {
 			e.printStackTrace();
 		}
 		executorService.shutdown();
-		
+
 	}
 
-	/*
-	 * Position de tous les utilisateurs internes
+	/**
+	 * Méthode pour obtenir la position courante de tous les utilisateurs
+	 * simultanément
+	 * 
+	 * @return List<Map<UUID, Location>>
+	 * 
 	 */
 	public List<Map<UUID, Location>> getAllCurrentLocations() {
 		List<Map<UUID, Location>> currentLocations = new ArrayList<>();
@@ -227,9 +291,13 @@ public class TourguideService {
 		return currentLocations;
 	}
 
-	/*
-	 * Liste des 5 attractions touristiques les plus proches � proximit� d'un lieux
-	 * donn�
+	/**
+	 * Méthode pour obtenir la liste des cinq attractions touristiques les plus
+	 * proches d'utilisateur
+	 * 
+	 * @param String
+	 * @return List<TouristAttraction>
+	 * 
 	 */
 	public List<TouristAttraction> getNearByAttractions(String userName) {
 		VisitedLocation visitedLocation = internalUserMap.get(userName).getLastVisitedLocation();
@@ -254,6 +322,12 @@ public class TourguideService {
 		return fiveNearestTouristAttraction;
 	}
 
+	/**
+	 * Méthode pour arrêter un thread en cours d'exécution
+	 * 
+	 * @return void
+	 * 
+	 */
 	private void addShutDownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
@@ -269,33 +343,75 @@ public class TourguideService {
 	 **********************************************************************************/
 	private static final String tripPricerApiKey = "test-server-api-key";
 
+	/**
+	 * Méthode pour générer une longitude aléatoirement
+	 * 
+	 * @return double
+	 * 
+	 */
 	private double generateRandomLongitude() {
 		double leftLimit = -180;
 		double rightLimit = 180;
 		return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
 	}
 
+	/**
+	 * Méthode pour générer une latitude aléatoirement
+	 * 
+	 * @return double
+	 * 
+	 */
 	private double generateRandomLatitude() {
 		double leftLimit = -85.05112878;
 		double rightLimit = 85.05112878;
 		return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
 	}
 
+	/**
+	 * Méthode pour générer une date aléatoirement
+	 * 
+	 * @return Date
+	 * 
+	 */
 	private Date getRandomTime() {
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
 
+	/**
+	 * Méthode pour vérifier si un emplacement est proche d'une attraction
+	 * 
+	 * @param Attraction
+	 * @param Location
+	 * @return boolean
+	 * 
+	 */
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
 		return getDistance(new Location(attraction.getLongitude(), attraction.getLatitude()), location) > props
 				.getAttractionProximityRange() ? false : true;
 	}
 
+	/**
+	 * Méthode pour vérifier si un emplacement visité est proche d'une attraction
+	 * 
+	 * @param Attraction
+	 * @param VisitedLocation
+	 * @return boolean
+	 * 
+	 */
 	private boolean nearAttraction(VisitedLocation visitedLocation, Attraction attraction) {
 		return getDistance(new Location(attraction.getLongitude(), attraction.getLatitude()),
 				visitedLocation.getLocation()) > props.getDefaultProximityBuffer() ? false : true;
 	}
 
+	/**
+	 * Méthode pour obtenir la distance entre deux emplacements
+	 * 
+	 * @param Location
+	 * @param Location
+	 * @return double
+	 * 
+	 */
 	public double getDistance(Location loc1, Location loc2) {
 		double lat1 = Math.toRadians(loc1.getLatitude());
 		double lon1 = Math.toRadians(loc1.getLongitude());
@@ -310,10 +426,23 @@ public class TourguideService {
 		return statuteMiles;
 	}
 
+	/**
+	 * Méthode pour obtenir la liste de toutes les attractions
+	 * 
+	 * @return List<Attraction>
+	 * 
+	 */
 	public List<Attraction> getAttractions() {
 		return attractions;
-	} 
+	}
 
+	/**
+	 * Méthode pour fixer une liste d'attractions
+	 * 
+	 * @param List<Attraction>
+	 * @return void
+	 * 
+	 */
 	public static void setAttractions(List<Attraction> attractions) {
 		TourguideService.attractions = attractions;
 	}

@@ -24,29 +24,7 @@ import tourguide.service.TourguideService;
 
 @SpringBootTest
 public class TestPerformance {
-
-	/*
-	 * A note on performance improvements:
-	 * 
-	 * The number of users generated for the high volume tests can be easily
-	 * adjusted via this method:
-	 * 
-	 * InternalTestHelper.setInternalUserNumber(100000);
-	 * 
-	 * 
-	 * These tests can be modified to suit new solutions, just as long as the
-	 * performance metrics at the end of the tests remains consistent.
-	 * 
-	 * These are performance metrics that we are trying to hit:
-	 * 
-	 * highVolumeTrackLocation: 100,000 users within 15 minutes:
-	 * assertTrue(TimeUnit.MINUTES.toSeconds(15) >=
-	 * TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
-	 *
-	 * highVolumeGetRewards: 100,000 users within 20 minutes:
-	 * assertTrue(TimeUnit.MINUTES.toSeconds(20) >=
-	 * TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
-	 */
+	
 	@Autowired
 	GpsUtilProxy gpsUtilProxy;
 	@Autowired
@@ -58,10 +36,6 @@ public class TestPerformance {
 
 	@BeforeEach
 	public void init() {
-//		CustomProperties props = new CustomProperties();
-//		GpsUtilProxy GpsUtilProxy = new GpsUtilProxy();
-//		RewardsProxy rewardsProxy = new RewardsProxy();
-//		TripPricerProxy tripPricerProxy = new TripPricerProxy();
 		props.setTestMode(true);
 		props.setInternalUserNumber(100000);
 		props.setApiUrlGpsUtil("http://localhost:9001");
@@ -76,20 +50,6 @@ public class TestPerformance {
 	@Test
 	public void highVolumeTrackLocation() {
 		// GIVEN
-//		CustomProperties props = new CustomProperties();
-//		GpsUtilProxy GpsUtilProxy = new GpsUtilProxy();
-//		RewardsProxy rewardsProxy = new RewardsProxy();
-//		TripPricerProxy tripPricerProxy = new TripPricerProxy();
-//		// Users should be incremented up to 100,000, and test finishes within 15
-//		// minutes
-//		props.setTestMode(true);
-//		props.setInternalUserNumber(100000);
-//		props.setApiUrlGpsUtil("http://localhost:9001");
-//		props.setApiUrlRewards("http://localhost:9002");
-//		props.setApiUrlTripPricer("http://localhost:9003");
-//		props.setDefaultProximityBuffer(10);
-//		props.setSTATUTE_MILES_PER_NAUTICAL_MILE(1.15077945);
-
 		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
 		tourguideService.getTracker().stopTracking();
 

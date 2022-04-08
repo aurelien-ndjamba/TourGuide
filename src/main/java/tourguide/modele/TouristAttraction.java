@@ -1,11 +1,7 @@
 package tourguide.modele;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class TouristAttraction {
 	
@@ -14,5 +10,20 @@ public class TouristAttraction {
 	private Location userLocation;
 	private double distance;
 	private int rewardPoints;
+	public String getAttractionName() {
+		return attractionName;
+	}
+	public Location getTouristLocation() {
+		return touristLocation;
+	}
+	public Location getUserLocation() {
+		return userLocation;
+	}
+	public double getDistance() {
+		return distance;
+	}
+	public int getRewardPoints() {
+		return rewardPoints;
+	}
 	
 }

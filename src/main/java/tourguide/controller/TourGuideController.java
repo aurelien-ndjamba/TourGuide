@@ -50,7 +50,7 @@ public class TourGuideController {
 	@RequestMapping("/getLocation")
 	public Location getLocation(@RequestParam String userName) {
 		logger.debug("Obtenir l'emplacement d'un utilisateur");
-		return tourguideService.getUserLocation(userName).getLocation();
+		return tourguideService.getLocation(userName);
 	}
 
 	/**
@@ -64,6 +64,7 @@ public class TourGuideController {
 	public List<TouristAttraction> getNearbyAttractions(@RequestParam String userName) {
 		logger.debug("Obtenir la liste de cinq attractions les plus proches d'un utlisateur");
 		return tourguideService.getNearByAttractions(userName);
+		
 	}
 
 	/**

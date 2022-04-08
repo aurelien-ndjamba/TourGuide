@@ -240,4 +240,40 @@ public class TestTourGuideService {
 		assertEquals(tourguideService.getAttractions().size(), userRewards.size());
 	}
 
+	@Test
+	public void TestGetUserLocation() {
+		// GIVEN
+		props.setTestMode(true);
+		props.setInternalUserNumber(0);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
+		// WHEN
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		tourguideService.addUser(user);
+		tourguideService.getLocation(user.getUserName());
+		
+		// THEN
+		assertEquals(tourguideService.getAllCurrentLocations().size(), 1);
+	}
+	
+	@Test
+	public void TestGetUserRewards() {
+		// GIVEN
+		props.setTestMode(true);
+		props.setInternalUserNumber(0);
+		props.setApiUrlGpsUtil("http://localhost:9001");
+		props.setApiUrlRewards("http://localhost:9002");
+		props.setApiUrlTripPricer("http://localhost:9003");
+		TourguideService tourguideService = new TourguideService(gpsUtilProxy, rewardsProxy, tripPricerProxy, props);
+		tourguideService.getTracker().stopTracking();
+		// WHEN
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourguide.com");
+		tourguideService.addUser(user);
+		
+		// THEN
+		assertEquals(tourguideService.getUserRewards(user.getUserName()).size(), 0);
+	}
+	
 }

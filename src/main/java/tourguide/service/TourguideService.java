@@ -33,9 +33,13 @@ import tourguide.repository.GpsUtilProxy;
 import tourguide.repository.RewardsProxy;
 import tourguide.repository.TripPricerProxy;
 
-@Data
+//@Data
 @Service
 public class TourguideService {
+
+	public Tracker getTracker() {
+		return tracker;
+	}
 
 	private Logger logger = LoggerFactory.getLogger(TourguideService.class);
 
@@ -181,6 +185,17 @@ public class TourguideService {
 	public List<UserReward> getUserRewards(String userName) {
 		User user = internalUserMap.get(userName);
 		return user.getUserRewards();
+	}
+
+	/**
+	 * Méthode pour obtenir l'emplacement d'un utilisateur
+	 * 
+	 * @param String
+	 * @return Location
+	 * 
+	 */
+	public Location getLocation(String userName) {
+		return getUserLocation(userName).getLocation();
 	}
 
 	/**
@@ -436,15 +451,15 @@ public class TourguideService {
 		return attractions;
 	}
 
-	/**
-	 * Méthode pour fixer une liste d'attractions
-	 * 
-	 * @param List<Attraction>
-	 * @return void
-	 * 
-	 */
-	public static void setAttractions(List<Attraction> attractions) {
-		TourguideService.attractions = attractions;
-	}
+//	/**
+//	 * Méthode pour fixer une liste d'attractions
+//	 * 
+//	 * @param List<Attraction>
+//	 * @return void
+//	 * 
+//	 */
+//	public static void setAttractions(List<Attraction> attractions) {
+//		TourguideService.attractions = attractions;
+//	}
 
 }
